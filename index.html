@@ -142,6 +142,7 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1.5px solid 
 </div>
 
 <script>
+window.addEventListener("DOMContentLoaded", function() {
 // ── 設定 ──
 var SB="https://itqqfcpvyhlchmaafxps.supabase.co";
 var SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cXFmY3B2eWhsY2htYWFmeHBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjA5NjIsImV4cCI6MjA5Mjc5Njk2Mn0.H_cBHlh05ZThfcxX2UlVivQ8gDA-_DFdRsuVG1mqs-s";
@@ -501,6 +502,7 @@ if(Array.isArray(res[0])&&Array.isArray(res[1])){
 online=true; CK=res[0]; PR=res[1]; lsSave(); tot(); rCal();
 }
 }).catch(function(){});
+}); // DOMContentLoaded
 </script>
 
 </body>
