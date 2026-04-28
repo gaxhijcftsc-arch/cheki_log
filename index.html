@@ -1,1 +1,509 @@
+<!DOCTYPE html>
 
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>チェキログ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f0f0f0;font-family:'Hiragino Sans','Noto Sans JP',sans-serif;max-width:480px;margin:0 auto;}
+button,input,select,textarea{font-family:inherit;}
+.hdr{background:#f0f0f0;border-bottom:1px solid #ddd;padding:14px 20px 10px;}
+.tab{display:none;padding:16px 16px 100px;}
+.tab.on{display:block;}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid #ddd;display:flex;z-index:99;}
+.nb{flex:1;padding:10px 0 14px;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:700;color:#aaa;cursor:pointer;}
+.nb.on{color:#6c63ff;}
+.dot{width:16px;height:2px;background:#6c63ff;border-radius:9px;}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #e0e0e0;}
+.btn{width:100%;padding:14px;border-radius:14px;border:none;background:#3a3a3a;color:#fff;font-weight:900;font-size:15px;display:block;margin-top:8px;cursor:pointer;}
+.btn.ok{background:#4caf50;}.btn.ng{background:#ff5252;}.btn.wh{background:#fff;color:#3a3a3a;border:1.5px solid #ddd;}
+label{display:block;font-size:11px;color:#aaa;font-weight:600;margin-bottom:4px;}
+input[type=text],input[type=date],select,textarea{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:9px 12px;font-size:14px;background:#fff;outline:none;color:#333;margin-bottom:12px;}
+.tag{background:#ede9ff;color:#6c63ff;border-radius:99px;font-size:10px;padding:2px 8px;font-weight:700;display:inline-block;}
+.tagg{background:#f5f5f5;color:#666;border-radius:99px;font-size:10px;padding:2px 8px;font-weight:700;display:inline-block;}
+.mc{display:flex;gap:12px;background:#fff;border-radius:14px;padding:12px;margin-bottom:8px;border:1px solid #e0e0e0;align-items:center;cursor:pointer;}
+.th{border-radius:8px;background:#e8e8e8;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;}
+.seg{display:flex;background:#e4e4e4;border-radius:10px;padding:3px;gap:2px;margin-bottom:12px;}
+.seg button{flex:1;padding:6px 0;border-radius:8px;border:none;font-size:13px;font-weight:700;background:transparent;color:#aaa;cursor:pointer;}
+.seg button.on{background:#fff;color:#333;}
+.pill{padding:5px 13px;border-radius:99px;border:1.5px solid #ddd;background:#fff;color:#666;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;flex-shrink:0;}
+.pill.on{border-color:#6c63ff;background:#6c63ff;color:#fff;}
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.sc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 20px;}
+.sc>div{background:#fff;border-radius:16px;padding:14px 10px;text-align:center;}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cd{border-radius:10px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;min-height:54px;cursor:pointer;}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:flex-end;justify-content:center;}
+.ov.on{display:flex;}
+.mod{background:#f0f0f0;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px;padding-bottom:48px;max-height:85vh;overflow-y:auto;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="font-size:22px;font-weight:900;color:#333">チェキログ</div>
+  <div id="tlbl" style="font-size:11px;color:#aaa">Total: 0枚 / 0名</div>
+</div>
+
+<!-- 登録 -->
+
+<div id="t0" class="tab on">
+  <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:16px">NEW CHEKI</div>
+  <label for="fin" style="width:100%;height:180px;background:#fff;border:2px dashed #ddd;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;overflow:hidden;cursor:pointer;" id="imgbox">
+    <div style="font-size:36px;margin-bottom:8px">📷</div>
+    <div style="font-size:13px;color:#aaa">タップして写真を追加</div>
+  </label>
+  <input type="file" id="fin" accept="image/*" style="position:absolute;left:-9999px;opacity:0;"/>
+  <div class="card" style="padding:16px 16px 4px">
+    <label>日付</label><input type="date" id="r-d"/>
+    <label>アイドル名 *</label><input type="text" id="r-i" placeholder="例: 〇〇 〇〇"/>
+    <label>グループ名</label><input type="text" id="r-g" placeholder="例: 〇〇グループ"/>
+    <label>イベント名</label><input type="text" id="r-e" placeholder="例: 〇〇フェス"/>
+    <label>場所</label><input type="text" id="r-p" placeholder="例: ライブハウス"/>
+  </div>
+  <button class="btn" id="rbtn" style="margin-top:16px">登録する</button>
+</div>
+
+<!-- カレンダー -->
+
+<div id="t1" class="tab">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <button id="cprev" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">‹</button>
+    <span id="ctitle" style="font-weight:900;font-size:17px;color:#333"></span>
+    <button id="cnext" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">›</button>
+  </div>
+  <div class="card" style="padding:12px">
+    <div class="cg" id="cwk"></div>
+    <div class="cg" id="cgr"></div>
+  </div>
+  <div id="clst"></div>
+</div>
+
+<!-- 集計 -->
+
+<div id="t2" class="tab">
+  <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:12px">STATISTICS</div>
+  <div class="seg">
+    <button class="on" id="sb0">月別</button>
+    <button id="sb1">年別</button>
+    <button id="sb2">全期間</button>
+  </div>
+  <div id="spk" style="display:flex;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:8px 12px;margin-bottom:12px">
+    <select id="syr" style="margin-bottom:0"></select><span style="color:#aaa;font-size:13px">年</span>
+    <select id="smo" style="margin-bottom:0"></select><span id="sml" style="color:#aaa;font-size:13px">月</span>
+  </div>
+  <div class="sc">
+    <div><div style="font-size:22px;margin-bottom:4px">📷</div><div id="s-c" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">チェキ</div></div>
+    <div><div style="font-size:22px;margin-bottom:4px">⭐</div><div id="s-i" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">メンバー</div></div>
+    <div><div style="font-size:22px;margin-bottom:4px">🎪</div><div id="s-e" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">イベント</div></div>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:1px;margin-bottom:10px">RANKING</div>
+  <div class="card" id="srk" style="padding:0;overflow:hidden"></div>
+</div>
+
+<!-- 一覧 -->
+
+<div id="t3" class="tab">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input type="text" id="srch" placeholder="🔍 検索" style="flex:1;margin-bottom:0"/>
+    <button id="csvbtn" style="padding:9px 14px;border-radius:12px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:700;color:#333;cursor:pointer;">⬇CSV</button>
+  </div>
+  <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">グループ</div>
+  <div class="pills" id="gpil"></div>
+  <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">会場</div>
+  <div class="pills" id="ppil"></div>
+  <div id="lcnt" style="font-size:12px;color:#aaa;margin-bottom:10px"></div>
+  <div id="litm"></div>
+</div>
+
+<!-- プロフィール -->
+
+<div id="t4" class="tab">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px">PROFILES</div>
+    <button id="addpbtn" style="border:none;background:#333;color:#fff;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;">＋ 追加</button>
+  </div>
+  <div id="plst"></div>
+</div>
+
+<nav class="nav">
+  <button class="nb on" id="n0"><span style="font-size:16px">＋</span>登録<div class="dot"></div></button>
+  <button class="nb" id="n1"><span style="font-size:16px">📅</span>カレンダー</button>
+  <button class="nb" id="n2"><span style="font-size:16px">📊</span>集計</button>
+  <button class="nb" id="n3"><span style="font-size:16px">🗂</span>一覧</button>
+  <button class="nb" id="n4"><span style="font-size:16px">⭐</span>プロフィール</button>
+</nav>
+
+<div class="ov" id="ov">
+  <div class="mod" id="mod"></div>
+</div>
+
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+// ── 設定 ──
+var SB="https://itqqfcpvyhlchmaafxps.supabase.co";
+var SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cXFmY3B2eWhsY2htYWFmeHBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjA5NjIsImV4cCI6MjA5Mjc5Njk2Mn0.H_cBHlh05ZThfcxX2UlVivQ8gDA-_DFdRsuVG1mqs-s";
+var SH={"Content-Type":"application/json","apikey":SK,"Authorization":"Bearer "+SK};
+var online=false;
+var CK=[],PR=[],rImg=null;
+var CY=new Date().getFullYear(),CM=new Date().getMonth(),CS=null;
+var SP="月別",GF="すべて",PF="すべて";
+var COLS=["#9c6fde","#e9967a","#5ba87b","#e9c46a","#4ea8de","#e76f51","#adb5bd","#f4a261"];
+
+// ── ユーティリティ ──
+function $(id){return document.getElementById(id);}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||"[]");}catch(e){return[];}}
+function lsSave(){try{localStorage.setItem("ck",JSON.stringify(CK));localStorage.setItem("pr",JSON.stringify(PR));}catch(e){}}
+function sbF(m,p,b){
+  var o={method:m,headers:Object.assign({},SH)};
+  if(b)o.body=JSON.stringify(b);
+  if(m==="POST"||m==="PATCH")o.headers["Prefer"]="return=representation";
+  return fetch(SB+p,o).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+}
+function avc(n,c){if(c)return c;if(!n)return"#aaa";var h=0;for(var i=0;i<n.length;i++)h+=n.charCodeAt(i);return"hsl("+(h%360)+",55%,70%)";}
+function avH(n,c,s){return'<div class="av" style="width:'+s+'px;height:'+s+'px;background:'+avc(n,c)+';font-size:'+(s*0.42)+'px">'+(n?n[0]:"?")+'</div>';}
+function thSm(img,idol,c){return'<div class="th" style="width:44px;height:62px;">'+(img?'<img src="'+img+'" style="width:100%;height:100%;object-fit:cover"/>':avH(idol,c,26))+'</div>';}
+function thLg(img,idol,c){return'<div class="th" style="width:120px;height:168px;">'+(img?'<img src="'+img+'" style="width:100%;height:100%;object-fit:cover"/>':avH(idol,c,72))+'</div>';}
+function gp(c){return PR.filter(function(p){return p.idol===c.idol&&p.group_name===c.group_name;})[0]||null;}
+function fd(ds){if(!ds)return"";var d=new Date(ds+"T00:00:00");return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日";}
+function uniq(a){var s={};return a.filter(function(v){if(!v||s[v])return false;s[v]=1;return true;});}
+function tot(){$("tlbl").textContent="Total: "+CK.length+"枚 / "+PR.length+"名";}
+
+// ── タブ ──
+function goTab(i){
+  for(var j=0;j<5;j++){
+    $("t"+j).className="tab"+(j===i?" on":"");
+    var b=$("n"+j); b.className="nb"+(j===i?" on":"");
+    var d=b.querySelector(".dot"); if(d)d.remove();
+    if(j===i){var dot=document.createElement("div");dot.className="dot";b.appendChild(dot);}
+  }
+  window.scrollTo(0,0);
+  if(i===1)rCal(); if(i===2)rStat(); if(i===3)rList(); if(i===4)rProf();
+}
+$("n0").addEventListener("click",function(){goTab(0);});
+$("n1").addEventListener("click",function(){goTab(1);});
+$("n2").addEventListener("click",function(){goTab(2);});
+$("n3").addEventListener("click",function(){goTab(3);});
+$("n4").addEventListener("click",function(){goTab(4);});
+
+// ── 写真（labelタグで直接紐付け、click()不使用）──
+$("fin").addEventListener("change",function(e){
+  var f=e.target.files[0]; if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    rImg=ev.target.result;
+    $("imgbox").innerHTML='<img src="'+rImg+'" style="width:100%;height:100%;object-fit:contain"/>';
+  };
+  r.readAsDataURL(f);
+});
+
+// ── 登録 ──
+$("rbtn").addEventListener("click",function(){
+  var date=$("r-d").value, idol=$("r-i").value.trim();
+  if(!date||!idol){alert("日付とアイドル名は必須です");return;}
+  var btn=$("rbtn"); btn.textContent="保存中..."; btn.disabled=true;
+  var item={date:date,idol:idol,group_name:$("r-g").value.trim(),event:$("r-e").value.trim(),place:$("r-p").value.trim(),image:rImg};
+  function done(c){
+    CK.push(c); lsSave();
+    $("r-d").value=""; $("r-i").value=""; $("r-g").value=""; $("r-e").value=""; $("r-p").value="";
+    rImg=null;
+    $("imgbox").innerHTML='<div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;color:#aaa">タップして写真を追加</div>';
+    tot(); btn.textContent="✓ 保存しました！"; btn.className="btn ok"; btn.disabled=false;
+    setTimeout(function(){btn.textContent="登録する";btn.className="btn";},2500);
+  }
+  if(online){
+    sbF("POST","/rest/v1/cheki",item).then(function(res){
+      done(Array.isArray(res)&&res[0]?res[0]:Object.assign({id:Date.now()},item));
+    });
+  } else {
+    done(Object.assign({id:Date.now()},item));
+  }
+});
+
+// ── カレンダー ──
+var WK=["日","月","火","水","木","金","土"];
+$("cprev").addEventListener("click",function(){if(CM===0){CY--;CM=11;}else CM--;CS=null;rCal();});
+$("cnext").addEventListener("click",function(){if(CM===11){CY++;CM=0;}else CM++;CS=null;rCal();});
+function rCal(){
+  $("ctitle").textContent=CY+"年 "+(CM+1)+"月";
+  $("cwk").innerHTML=WK.map(function(w,i){
+    return'<div style="text-align:center;font-size:11px;font-weight:700;color:'+(i===0?"#e53935":i===6?"#1e88e5":"#aaa")+';padding:4px 0">'+w+'</div>';
+  }).join("");
+  var bd={};
+  CK.forEach(function(c){if(!bd[c.date])bd[c.date]=[];bd[c.date].push(c);});
+  var days=new Date(CY,CM+1,0).getDate(), first=new Date(CY,CM,1).getDay(), html="";
+  for(var e=0;e<first;e++)html+="<div></div>";
+  for(var i=1;i<=days;i++){
+    var key=CY+"-"+String(CM+1).padStart(2,"0")+"-"+String(i).padStart(2,"0");
+    var its=bd[key]||[], isSel=CS===i, dow=(first+i-1)%7;
+    var col=isSel?"#fff":dow===0?"#e53935":dow===6?"#1e88e5":"#333";
+    var inn='<span style="font-size:12px;font-weight:700;color:'+col+'">'+i+'</span>';
+    if(its.length){
+      var p0=gp(its[0]);
+      inn+='<div style="width:28px;height:38px;border-radius:5px;background:#e0e0e0;overflow:hidden;margin-top:2px;display:flex;align-items:center;justify-content:center">'
+        +(its[0].image?'<img src="'+its[0].image+'" style="width:100%;height:100%;object-fit:cover"/>':avH(its[0].idol,p0&&p0.color,16))+'</div>';
+      if(its.length>1)inn+='<span style="font-size:9px;font-weight:700;color:'+(isSel?"#fff":"#6c63ff")+'">+'+its.length+'</span>';
+    }
+    html+='<div class="cd" data-d="'+i+'" style="background:'+(isSel?"#333":"transparent")+'">'+inn+'</div>';
+  }
+  $("cgr").innerHTML=html;
+  $("cgr").querySelectorAll(".cd").forEach(function(el){
+    el.addEventListener("click",function(){
+      var d=parseInt(this.getAttribute("data-d"));
+      CS=(CS===d)?null:d; rCal();
+    });
+  });
+  var clst=$("clst");
+  if(!CS){clst.innerHTML="";return;}
+  var k2=CY+"-"+String(CM+1).padStart(2,"0")+"-"+String(CS).padStart(2,"0");
+  var its2=CK.filter(function(c){return c.date===k2;});
+  clst.innerHTML='<div style="font-size:13px;font-weight:700;color:#aaa;margin-bottom:10px">'+(CM+1)+"月"+CS+"日 — "+its2.length+'枚</div>'
+    +(its2.length?its2.map(mcH).join(""):'<div style="text-align:center;color:#aaa;font-size:13px;padding:20px 0">この日のチェキはありません</div>');
+  clst.querySelectorAll(".mc").forEach(function(el,i){el.addEventListener("click",function(){openDet(its2[i]);});});
+}
+
+// ── 集計 ──
+$("sb0").addEventListener("click",function(){setStat("月別",$("sb0"));});
+$("sb1").addEventListener("click",function(){setStat("年別",$("sb1"));});
+$("sb2").addEventListener("click",function(){setStat("全期間",$("sb2"));});
+$("syr").addEventListener("change",rStat);
+$("smo").addEventListener("change",rStat);
+function setStat(p,btn){
+  SP=p;
+  [$("sb0"),$("sb1"),$("sb2")].forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");
+  $("spk").style.display=p==="全期間"?"none":"flex";
+  $("smo").style.display=p==="月別"?"block":"none";
+  $("sml").style.display=p==="月別"?"block":"none";
+  rStat();
+}
+function rStat(){
+  var yr=parseInt($("syr").value)||CY, mo=parseInt($("smo").value)||CM+1;
+  var f=CK;
+  if(SP==="月別")f=CK.filter(function(c){var d=new Date((c.date||"")+"T00:00:00");return d.getFullYear()===yr&&d.getMonth()+1===mo;});
+  else if(SP==="年別")f=CK.filter(function(c){return new Date((c.date||"")+"T00:00:00").getFullYear()===yr;});
+  $("s-c").textContent=f.length;
+  $("s-i").textContent=uniq(f.map(function(c){return c.idol;})).length;
+  $("s-e").textContent=uniq(f.map(function(c){return c.event;})).length;
+  var cnt={};f.forEach(function(c){if(c.idol)cnt[c.idol]=(cnt[c.idol]||0)+1;});
+  var rank=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];});
+  var max=rank.length?rank[0][1]:1;
+  var el=$("srk");
+  if(!rank.length){el.innerHTML='<div style="text-align:center;color:#aaa;font-size:13px;padding:24px 0">データがありません</div>';return;}
+  el.innerHTML=rank.map(function(entry,i){
+    var nm=entry[0],ct=entry[1],md=i===0?"#ffd54f":i===1?"#cfd8dc":i===2?"#ffab91":"#eee";
+    return'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:'+(i<rank.length-1?"1px solid #eee":"none")+'">'
+      +'<div style="width:24px;height:24px;border-radius:50%;background:'+md+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#555;flex-shrink:0">'+(i+1)+'</div>'
+      +avH(nm,null,30)
+      +'<span style="flex:1;font-size:14px;font-weight:700;color:#333">'+nm+'</span>'
+      +'<div style="width:80px;display:flex;align-items:center;gap:6px">'
+      +'<div style="flex:1;height:6px;background:#eee;border-radius:9px;overflow:hidden"><div style="height:100%;width:'+(ct/max*100)+'%;background:#6c63ff;border-radius:9px"></div></div>'
+      +'<span style="font-size:13px;font-weight:900;color:#333;min-width:20px;text-align:right">'+ct+'</span></div></div>';
+  }).join("");
+}
+
+// ── 一覧 ──
+$("srch").addEventListener("input",rList);
+$("csvbtn").addEventListener("click",function(){
+  var h="日付,アイドル名,グループ名,イベント名,場所";
+  var rows=CK.map(function(c){return[c.date,c.idol,c.group_name,c.event,c.place].map(function(v){return'"'+(v||"").replace(/"/g,'""')+'"';}).join(",");});
+  var blob=new Blob(["\uFEFF"+[h].concat(rows).join("\n")],{type:"text/csv"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="chekiLog.csv"; a.click();
+});
+function rList(){
+  var s=$("srch").value;
+  var grps=["すべて"].concat(uniq(CK.map(function(c){return c.group_name;})));
+  var plcs=["すべて"].concat(uniq(CK.map(function(c){return c.place;})));
+  $("gpil").innerHTML=grps.map(function(g){return'<button class="pill'+(GF===g?" on":"")+'">'+g+'</button>';}).join("");
+  $("ppil").innerHTML=plcs.map(function(p){return'<button class="pill'+(PF===p?" on":"")+'">'+p+'</button>';}).join("");
+  $("gpil").querySelectorAll("button").forEach(function(el,i){el.addEventListener("click",function(){GF=grps[i];rList();});});
+  $("ppil").querySelectorAll("button").forEach(function(el,i){el.addEventListener("click",function(){PF=plcs[i];rList();});});
+  var f=CK
+    .filter(function(c){return GF==="すべて"||c.group_name===GF;})
+    .filter(function(c){return PF==="すべて"||c.place===PF;})
+    .filter(function(c){return!s||[c.idol,c.event,c.place,c.group_name,c.date].some(function(v){return v&&v.includes(s);});})
+    .sort(function(a,b){return(b.date||"").localeCompare(a.date||"");});
+  $("lcnt").textContent=f.length+"件";
+  var el=$("litm");
+  if(!f.length){el.innerHTML='<div style="text-align:center;color:#aaa;font-size:13px;padding:32px 0">該当するチェキがありません</div>';return;}
+  el.innerHTML=f.map(mcH).join("");
+  el.querySelectorAll(".mc").forEach(function(el,i){el.addEventListener("click",function(){openDet(f[i]);});});
+}
+
+// ── プロフィール ──
+$("addpbtn").addEventListener("click",function(){openPE(null);});
+function rProf(){
+  var el=$("plst");
+  if(!PR.length){el.innerHTML='<div style="text-align:center;color:#aaa;font-size:13px;padding:40px 0">プロフィールがありません<br/>右上のボタンから追加してください</div>';return;}
+  el.innerHTML=PR.map(function(p){
+    var cnt=CK.filter(function(c){return c.idol===p.idol&&c.group_name===p.group_name;}).length;
+    return'<div class="mc" data-pid="'+p.id+'">'+avH(p.idol,p.color,48)
+      +'<div style="flex:1"><div style="font-weight:800;font-size:15px;color:#333">'+(p.idol||"")+'</div>'
+      +(p.group_name?'<div style="font-size:12px;color:#aaa;margin-bottom:4px">'+p.group_name+'</div>':"")
+      +'<span class="tagg">📷 '+cnt+'枚</span>'+(p.memo?'<span class="tag" style="margin-left:4px">'+p.memo+'</span>':"")
+      +'</div><div style="color:#aaa;font-size:18px">›</div></div>';
+  }).join("");
+  $("plst").querySelectorAll(".mc").forEach(function(el){
+    el.addEventListener("click",function(){openPE(this.getAttribute("data-pid"));});
+  });
+}
+function openPE(id){
+  var p=id?PR.filter(function(x){return x.id===id;})[0]:null;
+  $("mod").innerHTML=
+    '<div style="width:36px;height:4px;background:#ddd;border-radius:9px;margin:0 auto 16px"></div>'
+    +'<button id="peback" style="background:none;border:none;color:#aaa;font-size:13px;margin-bottom:16px;padding:0;cursor:pointer;">← 戻る</button>'
+    +'<div style="font-size:14px;font-weight:900;color:#333;margin-bottom:20px">'+(p?"プロフィール編集":"プロフィール追加")+'</div>'
+    +'<div class="card" style="padding:16px 16px 4px">'
+    +'<label>アイドル名 *</label><input type="text" id="pe-i" value="'+(p?p.idol||"":"")+'" placeholder="例: 〇〇 〇〇"/>'
+    +'<label>グループ名</label><input type="text" id="pe-g" value="'+(p?p.group_name||"":"")+'" placeholder="例: 〇〇グループ"/>'
+    +'<label>カラー</label>'
+    +'<div id="colbtns" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+    +COLS.map(function(c){return'<div data-c="'+c+'" style="width:32px;height:32px;border-radius:50%;background:'+c+';cursor:pointer;border:3px solid '+(p&&p.color===c?"#333":"transparent")+'"></div>';}).join("")
+    +'</div>'
+    +'<input type="hidden" id="pe-c" value="'+(p?p.color||COLS[0]:COLS[0])+'"/>'
+    +'<label>メモ</label>'
+    +'<textarea id="pe-m" style="width:100%;border:1.5px solid #ddd;border-radius:10px;padding:9px 12px;font-size:14px;outline:none;height:72px;resize:none;margin-bottom:12px;background:#fff;">'+(p?p.memo||"":"")+'</textarea>'
+
+```
++'</div>'
++'<button class="btn" id="pesave">'+(p?"保存する":"追加する")+'</button>'
++(p?'<button class="btn ng" id="pedel">削除</button>':"");
+```
+
+$(“peback”).addEventListener(“click”,closeMod);
+$(“colbtns”).querySelectorAll(“div”).forEach(function(el){
+el.addEventListener(“click”,function(){
+$(“colbtns”).querySelectorAll(“div”).forEach(function(d){d.style.border=“3px solid transparent”;});
+this.style.border=“3px solid #333”;
+$(“pe-c”).value=this.getAttribute(“data-c”);
+});
+});
+$(“pesave”).addEventListener(“click”,function(){savePE(p?p.id:null);});
+if(p)$(“pedel”).addEventListener(“click”,function(){delProf(p.id);});
+$(“ov”).classList.add(“on”);
+}
+function savePE(id){
+var idol=$(“pe-i”).value.trim(); if(!idol){alert(“アイドル名は必須です”);return;}
+var form={idol:idol,group_name:$(“pe-g”).value.trim(),color:$(“pe-c”).value,memo:$(“pe-m”).value.trim()};
+function done(saved){
+if(id){var idx=PR.findIndex(function(p){return p.id===id;});if(idx>=0)PR[idx]=saved;}
+else PR.push(saved);
+lsSave(); closeMod(); rProf(); tot();
+}
+if(id){
+if(online)sbF(“PATCH”,”/rest/v1/profiles?id=eq.”+id,form).then(function(){done(Object.assign({id:id},form));});
+else done(Object.assign({id:id},form));
+} else {
+form.id=“p_”+Date.now();
+if(online)sbF(“POST”,”/rest/v1/profiles”,form).then(function(res){done(Array.isArray(res)&&res[0]?res[0]:form);});
+else done(form);
+}
+}
+function delProf(id){
+if(!confirm(“削除しますか？”))return;
+PR=PR.filter(function(p){return p.id!==id;}); lsSave();
+if(online)fetch(SB+”/rest/v1/profiles?id=eq.”+id,{method:“DELETE”,headers:SH});
+closeMod(); rProf(); tot();
+}
+
+// ── 詳細 ──
+function mcH(c){
+var p=gp(c);
+return’<div class="mc">’+thSm(c.image,c.idol,p&&p.color)
++’<div style="flex:1;min-width:0">’
++’<div style="font-weight:800;font-size:14px;color:#333;margin-bottom:2px">’+(c.idol||”—”)+’</div>’
++’<div style="font-size:11px;color:#aaa;margin-bottom:4px">’+fd(c.date)+’</div>’
++(c.group_name?’<span class="tag">’+c.group_name+’</span> ‘:””)
++(c.event?’<span class="tagg">’+c.event+’</span>’:””)
++(c.place?’<div style="font-size:11px;color:#aaa;margin-top:4px">📍 ‘+c.place+’</div>’:””)
++’</div><div style="color:#aaa;font-size:18px">›</div></div>’;
+}
+function openDet(c){
+var p=gp(c);
+$(“mod”).innerHTML=
+‘<div style="width:36px;height:4px;background:#ddd;border-radius:9px;margin:0 auto 16px"></div>’
++’<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">’
++’<span style="font-weight:900;font-size:16px;color:#333">詳細</span>’
++’<button id="dedit" style="border:1px solid #ddd;border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;background:#333;color:#fff;cursor:pointer;">✏️ 編集</button></div>’
++’<div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:16px">’
++thLg(c.image,c.idol,p&&p.color)
++’<div style="flex:1">’
++’<div style="font-size:20px;font-weight:900;color:#333;margin-bottom:6px">’+(c.idol||”—”)+’</div>’
++(c.group_name?’<span class="tag">’+c.group_name+’</span>’:””)
++’<div style="font-size:13px;color:#aaa;margin-top:8px">’+fd(c.date)+’</div></div></div>’
++(c.event?’<div style="display:flex;gap:8px;padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><span style="color:#aaa;min-width:90px">🎪 イベント</span><span style="color:#333;font-weight:600">’+c.event+’</span></div>’:””)
++(c.place?’<div style="display:flex;gap:8px;padding:10px 0;border-bottom:1px solid #eee;font-size:14px"><span style="color:#aaa;min-width:90px">📍 場所</span><span style="color:#333;font-weight:600">’+c.place+’</span></div>’:””)
++’<div style="display:flex;gap:10px;margin-top:20px">’
++’<button class="btn wh" style="flex:1;margin-top:0" id="dclose">閉じる</button>’
++’<button class="btn ng" style="flex:1;margin-top:0" id="ddel">削除</button></div>’;
+$(“dedit”).addEventListener(“click”,function(){openEdit(c);});
+$(“dclose”).addEventListener(“click”,closeMod);
+$(“ddel”).addEventListener(“click”,function(){delCK(c.id);});
+$(“ov”).classList.add(“on”);
+}
+function openEdit(c){
+$(“mod”).innerHTML=
+‘<div style="width:36px;height:4px;background:#ddd;border-radius:9px;margin:0 auto 16px"></div>’
++’<div style="font-weight:900;font-size:16px;color:#333;margin-bottom:16px">編集</div>’
++’<div class="card" style="padding:16px 16px 4px">’
++’<label>日付</label><input type=“date” id=“ed-d” value=”’+(c.date||””)+’”/>’
++’<label>アイドル名</label><input type=“text” id=“ed-i” value=”’+(c.idol||””)+’”/>’
++’<label>グループ名</label><input type=“text” id=“ed-g” value=”’+(c.group_name||””)+’”/>’
++’<label>イベント名</label><input type=“text” id=“ed-e” value=”’+(c.event||””)+’”/>’
++’<label>場所</label><input type=“text” id=“ed-p” value=”’+(c.place||””)+’”/></div>’
++’<button class="btn" id="edsv">保存する</button>’
++’<button class="btn wh" id="edcn">キャンセル</button>’;
+$(“edsv”).addEventListener(“click”,function(){saveEdit(c.id);});
+$(“edcn”).addEventListener(“click”,function(){openDet(c);});
+}
+function saveEdit(id){
+var data={date:$(“ed-d”).value,idol:$(“ed-i”).value.trim(),group_name:$(“ed-g”).value.trim(),event:$(“ed-e”).value.trim(),place:$(“ed-p”).value.trim()};
+var idx=CK.findIndex(function(c){return c.id===id;});
+if(idx>=0)CK[idx]=Object.assign(CK[idx],data);
+lsSave();
+if(online)sbF(“PATCH”,”/rest/v1/cheki?id=eq.”+id,data);
+closeMod(); rList();
+}
+function delCK(id){
+if(!confirm(“削除しますか？”))return;
+CK=CK.filter(function(c){return c.id!==id;}); lsSave();
+if(online)fetch(SB+”/rest/v1/cheki?id=eq.”+id,{method:“DELETE”,headers:SH});
+closeMod(); tot(); rList();
+}
+function closeMod(){$(“ov”).classList.remove(“on”);}
+$(“ov”).addEventListener(“click”,function(e){if(e.target===this)closeMod();});
+
+// ── 集計セレクト初期化 ──
+(function(){
+var yEl=$(“syr”), mEl=$(“smo”);
+[2023,2024,2025,2026,2027].forEach(function(y){
+var o=document.createElement(“option”); o.value=y; o.textContent=y;
+if(y===CY)o.selected=true; yEl.appendChild(o);
+});
+for(var i=1;i<=12;i++){
+var o=document.createElement(“option”); o.value=i; o.textContent=i;
+if(i===CM+1)o.selected=true; mEl.appendChild(o);
+}
+})();
+
+// ── 起動 ──
+CK=lsGet(“ck”); PR=lsGet(“pr”);
+tot(); rCal();
+
+// Supabase同期
+Promise.all([
+fetch(SB+”/rest/v1/cheki?select=*&order=created_at.asc”,{headers:SH}).then(function(r){return r.json();}),
+fetch(SB+”/rest/v1/profiles?select=*”,{headers:SH}).then(function(r){return r.json();})
+]).then(function(res){
+if(Array.isArray(res[0])&&Array.isArray(res[1])){
+online=true; CK=res[0]; PR=res[1]; lsSave(); tot(); rCal();
+}
+}).catch(function(){});
+}); // DOMContentLoaded
+</script>
+
+</body>
+</html>
