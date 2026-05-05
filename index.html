@@ -7,12 +7,14 @@
 <title>チェキログ</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0f0f0;font-family:'Hiragino Sans','Noto Sans JP',sans-serif;max-width:480px;margin:0 auto;}
+html,body{height:100%;}
+body{background:#f0f0f0;font-family:'Hiragino Sans','Noto Sans JP',sans-serif;max-width:480px;margin:0 auto;display:flex;flex-direction:column;height:100%;}
 button,input,select,textarea{font-family:inherit;}
-.hdr{background:#f0f0f0;border-bottom:1px solid #ddd;padding:14px 20px 10px;}
-.tab{display:none;padding:16px 16px 100px;}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;...z-index:9;}
-.nb{flex:1;padding:10px 0 14px;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:700;color:#aaa;cursor:pointer;}
+#wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.hdr{background:#f0f0f0;border-bottom:1px solid #ddd;padding:14px 20px 10px;flex-shrink:0;}
+.tab{display:none;padding:16px 16px 24px;flex:1;}
+.nav{background:#fff;border-top:1px solid #ddd;display:flex;flex-shrink:0;}
+.nb{flex:1;padding:10px 0 12px;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:700;color:#aaa;cursor:pointer;}
 .dot{width:16px;height:2px;background:#6c63ff;border-radius:9px;}
 .card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #e0e0e0;}
 .btn{width:100%;padding:14px;border-radius:14px;border:none;background:#3a3a3a;color:#fff;font-weight:900;font-size:15px;display:block;margin-top:8px;cursor:pointer;}
@@ -36,88 +38,89 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1.5px solid 
 </style>
 </head>
 <body>
-<div class="hdr">
-  <div style="font-size:22px;font-weight:900;color:#333">チェキログ</div>
-  <div id="tlbl" style="font-size:11px;color:#aaa">Total: 0枚 / 0名</div>
-</div>
-
-<div id="t0" class="tab" style="display:block">
-  <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:16px">NEW CHEKI</div>
-  <label for="fin" id="imgbox" style="width:100%;height:180px;background:#fff;border:2px dashed #ddd;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;overflow:hidden;cursor:pointer;">
-    <div style="font-size:36px;margin-bottom:8px">📷</div>
-    <div style="font-size:13px;color:#aaa">タップして写真を追加</div>
-  </label>
-  <input type="file" id="fin" accept="image/*" style="position:absolute;left:-9999px;"/>
-  <div class="card" style="padding:16px 16px 4px">
-    <label class="lbl">日付</label><input type="date" id="r-d"/>
-    <label class="lbl">アイドル名 *</label><input type="text" id="r-i" placeholder="例: 〇〇 〇〇"/>
-    <label class="lbl">グループ名</label><input type="text" id="r-g" placeholder="例: 〇〇グループ"/>
-    <label class="lbl">イベント名</label><input type="text" id="r-e" placeholder="例: 〇〇フェス"/>
-    <label class="lbl">場所</label><input type="text" id="r-p" placeholder="例: ライブハウス"/>
+<div id="wrap">
+  <div class="hdr">
+    <div style="font-size:22px;font-weight:900;color:#333">チェキログ</div>
+    <div id="tlbl" style="font-size:11px;color:#aaa">Total: 0枚 / 0名</div>
   </div>
-  <button class="btn" id="rbtn" style="margin-top:16px">登録する</button>
-</div>
 
-<div id="t1" class="tab">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <button id="cprev" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">‹</button>
-    <span id="ctitle" style="font-weight:900;font-size:17px;color:#333"></span>
-    <button id="cnext" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">›</button>
+  <div id="t0" class="tab" style="display:block">
+    <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:16px">NEW CHEKI</div>
+    <label for="fin" id="imgbox" style="width:100%;height:180px;background:#fff;border:2px dashed #ddd;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;overflow:hidden;cursor:pointer;">
+      <div style="font-size:36px;margin-bottom:8px">📷</div>
+      <div style="font-size:13px;color:#aaa">タップして写真を追加</div>
+    </label>
+    <input type="file" id="fin" accept="image/*" style="position:absolute;left:-9999px;"/>
+    <div class="card" style="padding:16px 16px 4px">
+      <label class="lbl">日付</label><input type="date" id="r-d"/>
+      <label class="lbl">アイドル名 *</label><input type="text" id="r-i" placeholder="例: 〇〇 〇〇"/>
+      <label class="lbl">グループ名</label><input type="text" id="r-g" placeholder="例: 〇〇グループ"/>
+      <label class="lbl">イベント名</label><input type="text" id="r-e" placeholder="例: 〇〇フェス"/>
+      <label class="lbl">場所</label><input type="text" id="r-p" placeholder="例: ライブハウス"/>
+    </div>
+    <button class="btn" id="rbtn" style="margin-top:16px">登録する</button>
   </div>
-  <div class="card" style="padding:12px"><div class="cg" id="cwk"></div><div class="cg" id="cgr"></div></div>
-  <div id="clst"></div>
-</div>
 
-<div id="t2" class="tab">
-  <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:12px">STATISTICS</div>
-  <div class="seg"><button id="sb0" style="background:#fff;color:#333;">月別</button><button id="sb1">年別</button><button id="sb2">全期間</button></div>
-  <div id="spk" style="display:flex;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:8px 12px;margin-bottom:12px">
-    <select id="syr" style="margin-bottom:0"></select><span style="color:#aaa;font-size:13px">年</span>
-    <select id="smo" style="margin-bottom:0"></select><span id="sml" style="color:#aaa;font-size:13px">月</span>
+  <div id="t1" class="tab">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <button id="cprev" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">‹</button>
+      <span id="ctitle" style="font-weight:900;font-size:17px;color:#333"></span>
+      <button id="cnext" style="width:36px;height:36px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:16px;cursor:pointer;">›</button>
+    </div>
+    <div class="card" style="padding:12px"><div class="cg" id="cwk"></div><div class="cg" id="cgr"></div></div>
+    <div id="clst"></div>
   </div>
-  <div class="sc">
-    <div><div style="font-size:22px;margin-bottom:4px">📷</div><div id="s-c" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">チェキ</div></div>
-    <div><div style="font-size:22px;margin-bottom:4px">⭐</div><div id="s-i" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">メンバー</div></div>
-    <div><div style="font-size:22px;margin-bottom:4px">🎪</div><div id="s-e" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">イベント</div></div>
-  </div>
-  <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:1px;margin-bottom:10px">RANKING</div>
-  <div class="card" id="srk" style="padding:0;overflow:hidden"></div>
-</div>
 
-<div id="t3" class="tab">
-  <div style="display:flex;gap:8px;margin-bottom:12px">
-    <input type="text" id="srch" placeholder="🔍 検索" style="flex:1;margin-bottom:0"/>
-    <button id="csvbtn" style="padding:9px 14px;border-radius:12px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:700;color:#333;cursor:pointer;">⬇CSV</button>
+  <div id="t2" class="tab">
+    <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px;margin-bottom:12px">STATISTICS</div>
+    <div class="seg"><button id="sb0" style="background:#fff;color:#333;">月別</button><button id="sb1">年別</button><button id="sb2">全期間</button></div>
+    <div id="spk" style="display:flex;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:8px 12px;margin-bottom:12px">
+      <select id="syr" style="margin-bottom:0"></select><span style="color:#aaa;font-size:13px">年</span>
+      <select id="smo" style="margin-bottom:0"></select><span id="sml" style="color:#aaa;font-size:13px">月</span>
+    </div>
+    <div class="sc">
+      <div><div style="font-size:22px;margin-bottom:4px">📷</div><div id="s-c" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">チェキ</div></div>
+      <div><div style="font-size:22px;margin-bottom:4px">⭐</div><div id="s-i" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">メンバー</div></div>
+      <div><div style="font-size:22px;margin-bottom:4px">🎪</div><div id="s-e" style="font-size:28px;font-weight:900;color:#333">0</div><div style="font-size:11px;color:#aaa;font-weight:600">イベント</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#aaa;letter-spacing:1px;margin-bottom:10px">RANKING</div>
+    <div class="card" id="srk" style="padding:0;overflow:hidden"></div>
   </div>
-  <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">グループ</div>
-  <div class="pills" id="gpil"></div>
-  <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">会場</div>
-  <div class="pills" id="ppil"></div>
-  <div id="lcnt" style="font-size:12px;color:#aaa;margin-bottom:10px"></div>
-  <div id="litm"></div>
-</div>
 
-<div id="t4" class="tab">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-    <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px">PROFILES</div>
-    <button id="addpbtn" style="border:none;background:#333;color:#fff;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;">＋ 追加</button>
+  <div id="t3" class="tab">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="srch" placeholder="🔍 検索" style="flex:1;margin-bottom:0"/>
+      <button id="csvbtn" style="padding:9px 14px;border-radius:12px;border:1.5px solid #ddd;background:#fff;font-size:13px;font-weight:700;color:#333;cursor:pointer;">⬇CSV</button>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">グループ</div>
+    <div class="pills" id="gpil"></div>
+    <div style="font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px">会場</div>
+    <div class="pills" id="ppil"></div>
+    <div id="lcnt" style="font-size:12px;color:#aaa;margin-bottom:10px"></div>
+    <div id="litm"></div>
   </div>
-  <div id="plst"></div>
-</div>
 
-<nav class="nav">
-  <button class="nb" id="n0" style="color:#6c63ff;"><span style="font-size:16px">＋</span>登録<div class="dot"></div></button>
-  <button class="nb" id="n1"><span style="font-size:16px">📅</span>カレンダー</button>
-  <button class="nb" id="n2"><span style="font-size:16px">📊</span>集計</button>
-  <button class="nb" id="n3"><span style="font-size:16px">🗂</span>一覧</button>
-  <button class="nb" id="n4"><span style="font-size:16px">⭐</span>プロフィール</button>
-</nav>
+  <div id="t4" class="tab">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:11px;color:#aaa;font-weight:700;letter-spacing:1px">PROFILES</div>
+      <button id="addpbtn" style="border:none;background:#333;color:#fff;border-radius:10px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;">＋ 追加</button>
+    </div>
+    <div id="plst"></div>
+  </div>
+
+  <nav class="nav">
+    <button class="nb" id="n0" style="color:#6c63ff;"><span style="font-size:16px">＋</span>登録<div class="dot"></div></button>
+    <button class="nb" id="n1"><span style="font-size:16px">📅</span>カレンダー</button>
+    <button class="nb" id="n2"><span style="font-size:16px">📊</span>集計</button>
+    <button class="nb" id="n3"><span style="font-size:16px">🗂</span>一覧</button>
+    <button class="nb" id="n4"><span style="font-size:16px">⭐</span>プロフィール</button>
+  </nav>
+</div>
 
 <div class="ov" id="ov"><div class="mod" id="mod"></div></div>
 
 <script>
 window.addEventListener("DOMContentLoaded",function(){
-
 var SB="https://itqqfcpvyhlchmaafxps.supabase.co";
 var SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cXFmY3B2eWhsY2htYWFmeHBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjA5NjIsImV4cCI6MjA5Mjc5Njk2Mn0.H_cBHlh05ZThfcxX2UlVivQ8gDA-_DFdRsuVG1mqs-s";
 var SH={"Content-Type":"application/json","apikey":SK,"Authorization":"Bearer "+SK};
@@ -125,7 +128,6 @@ var online=false,CK=[],PR=[],rImg=null;
 var CY=new Date().getFullYear(),CM=new Date().getMonth(),CS=null;
 var SP="月別",GF="すべて",PF="すべて";
 var COLS=["#9c6fde","#e9967a","#5ba87b","#e9c46a","#4ea8de","#e76f51","#adb5bd","#f4a261"];
-var curTab=0;
 
 function $(i){return document.getElementById(i);}
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||"[]");}catch(e){return[];}}
@@ -140,7 +142,6 @@ function fd(ds){if(!ds)return"";var d=new Date(ds+"T00:00:00");return d.getFullY
 function uniq(a){var s={};return a.filter(function(v){if(!v||s[v])return false;s[v]=1;return true;});}
 function tot(){$("tlbl").textContent="Total: "+CK.length+"枚 / "+PR.length+"名";}
 
-// タブ切替
 function goTab(i){
   for(var j=0;j<5;j++){
     var t=$("t"+j); t.style.display=j===i?"block":"none";
@@ -148,7 +149,7 @@ function goTab(i){
     var d=b.querySelector(".dot"); if(d)d.remove();
     if(j===i){var dot=document.createElement("div");dot.className="dot";b.appendChild(dot);}
   }
-  curTab=i; window.scrollTo(0,0);
+  $("wrap").scrollTop=0;
   if(i===1)rCal(); if(i===2)rStat(); if(i===3)rList(); if(i===4)rProf();
 }
 $("n0").addEventListener("click",function(){goTab(0);});
@@ -157,36 +158,29 @@ $("n2").addEventListener("click",function(){goTab(2);});
 $("n3").addEventListener("click",function(){goTab(3);});
 $("n4").addEventListener("click",function(){goTab(4);});
 
-// 写真
 $("fin").addEventListener("change",function(e){
   var f=e.target.files[0]; if(!f)return;
   var r=new FileReader();
-  r.onload=function(ev){
-    rImg=ev.target.result;
-    $("imgbox").innerHTML='<img src="'+rImg+'" style="width:100%;height:100%;object-fit:contain"/>';
-  };
+  r.onload=function(ev){rImg=ev.target.result;$("imgbox").innerHTML='<img src="'+rImg+'" style="width:100%;height:100%;object-fit:contain"/>';};
   r.readAsDataURL(f);
 });
 
-// 登録
 $("rbtn").addEventListener("click",function(){
-  var date=$("r-d").value, idol=$("r-i").value.trim();
+  var date=$("r-d").value,idol=$("r-i").value.trim();
   if(!date||!idol){alert("日付とアイドル名は必須です");return;}
-  var btn=$("rbtn"); btn.textContent="保存中..."; btn.disabled=true;
+  var btn=$("rbtn");btn.textContent="保存中...";btn.disabled=true;
   var item={date:date,idol:idol,group_name:$("r-g").value.trim(),event:$("r-e").value.trim(),place:$("r-p").value.trim(),image:rImg};
   function done(c){
-    CK.push(c); lsSave();
-    $("r-d").value=""; $("r-i").value=""; $("r-g").value=""; $("r-e").value=""; $("r-p").value="";
-    rImg=null;
-    $("imgbox").innerHTML='<div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;color:#aaa">タップして写真を追加</div>';
-    tot(); btn.textContent="✓ 保存しました！"; btn.style.background="#4caf50"; btn.disabled=false;
+    CK.push(c);lsSave();
+    $("r-d").value="";$("r-i").value="";$("r-g").value="";$("r-e").value="";$("r-p").value="";
+    rImg=null;$("imgbox").innerHTML='<div style="font-size:36px;margin-bottom:8px">📷</div><div style="font-size:13px;color:#aaa">タップして写真を追加</div>';
+    tot();btn.textContent="✓ 保存しました！";btn.style.background="#4caf50";btn.disabled=false;
     setTimeout(function(){btn.textContent="登録する";btn.style.background="#3a3a3a";},2500);
   }
   if(online){sbF("POST","/rest/v1/cheki",item).then(function(res){done(Array.isArray(res)&&res[0]?res[0]:Object.assign({id:Date.now()},item));});}
   else done(Object.assign({id:Date.now()},item));
 });
 
-// カレンダー
 var WK=["日","月","火","水","木","金","土"];
 $("cprev").addEventListener("click",function(){if(CM===0){CY--;CM=11;}else CM--;CS=null;rCal();});
 $("cnext").addEventListener("click",function(){if(CM===11){CY++;CM=0;}else CM++;CS=null;rCal();});
@@ -214,7 +208,6 @@ function rCal(){
   clst.querySelectorAll(".mc").forEach(function(el,i){el.addEventListener("click",function(){openDet(its2[i]);});});
 }
 
-// 集計
 $("sb0").addEventListener("click",function(){setStat("月別",0);});
 $("sb1").addEventListener("click",function(){setStat("年別",1);});
 $("sb2").addEventListener("click",function(){setStat("全期間",2);});
@@ -233,7 +226,7 @@ function rStat(){
   var f=CK;
   if(SP==="月別")f=CK.filter(function(c){var d=new Date((c.date||"")+"T00:00:00");return d.getFullYear()===yr&&d.getMonth()+1===mo;});
   else if(SP==="年別")f=CK.filter(function(c){return new Date((c.date||"")+"T00:00:00").getFullYear()===yr;});
-  $("s-c").textContent=f.length; $("s-i").textContent=uniq(f.map(function(c){return c.idol;})).length; $("s-e").textContent=uniq(f.map(function(c){return c.event;})).length;
+  $("s-c").textContent=f.length;$("s-i").textContent=uniq(f.map(function(c){return c.idol;})).length;$("s-e").textContent=uniq(f.map(function(c){return c.event;})).length;
   var cnt={};f.forEach(function(c){if(c.idol)cnt[c.idol]=(cnt[c.idol]||0)+1;});
   var rank=Object.entries(cnt).sort(function(a,b){return b[1]-a[1];}),max=rank.length?rank[0][1]:1;
   var el=$("srk");
@@ -241,7 +234,6 @@ function rStat(){
   el.innerHTML=rank.map(function(e2,i){var nm=e2[0],ct=e2[1],md=i===0?"#ffd54f":i===1?"#cfd8dc":i===2?"#ffab91":"#eee";return'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:'+(i<rank.length-1?"1px solid #eee":"none")+'">'+'<div style="width:24px;height:24px;border-radius:50%;background:'+md+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#555;flex-shrink:0">'+(i+1)+'</div>'+avH(nm,null,30)+'<span style="flex:1;font-size:14px;font-weight:700;color:#333">'+nm+'</span><div style="width:80px;display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:#eee;border-radius:9px;overflow:hidden"><div style="height:100%;width:'+(ct/max*100)+'%;background:#6c63ff;border-radius:9px"></div></div><span style="font-size:13px;font-weight:900;color:#333;min-width:20px;text-align:right">'+ct+'</span></div></div>';}).join("");
 }
 
-// 一覧
 $("srch").addEventListener("input",rList);
 $("csvbtn").addEventListener("click",function(){
   var h="日付,アイドル名,グループ名,イベント名,場所";
@@ -264,7 +256,6 @@ function rList(){
   el.querySelectorAll(".mc").forEach(function(el,i){el.addEventListener("click",function(){openDet(f[i]);});});
 }
 
-// プロフィール
 $("addpbtn").addEventListener("click",function(){openPE(null);});
 function rProf(){
   var el=$("plst");
@@ -283,7 +274,7 @@ if(p)$(“pedel”).addEventListener(“click”,function(){delProf(p.id);});
 $(“ov”).style.display=“flex”;
 }
 function savePE(id){
-var idol=$(“pe-i”).value.trim(); if(!idol){alert(“アイドル名は必須です”);return;}
+var idol=$(“pe-i”).value.trim();if(!idol){alert(“アイドル名は必須です”);return;}
 var form={idol:idol,group_name:$(“pe-g”).value.trim(),color:$(“pe-c”).value,memo:$(“pe-m”).value.trim()};
 function done(saved){if(id){var idx=PR.findIndex(function(p){return p.id===id;});if(idx>=0)PR[idx]=saved;}else PR.push(saved);lsSave();closeMod();rProf();tot();}
 if(id){if(online)sbF(“PATCH”,”/rest/v1/profiles?id=eq.”+id,form).then(function(){done(Object.assign({id:id},form));});else done(Object.assign({id:id},form));}
@@ -314,21 +305,18 @@ function delCK(id){if(!confirm(“削除しますか？”))return;CK=CK.filter(
 function closeMod(){$(“ov”).style.display=“none”;}
 $(“ov”).addEventListener(“click”,function(e){if(e.target===this)closeMod();});
 
-// 集計セレクト
 var yEl=$(“syr”),mEl=$(“smo”);
 [2023,2024,2025,2026,2027].forEach(function(y){var o=document.createElement(“option”);o.value=y;o.textContent=y;if(y===CY)o.selected=true;yEl.appendChild(o);});
 for(var mi=1;mi<=12;mi++){var o=document.createElement(“option”);o.value=mi;o.textContent=mi;if(mi===CM+1)o.selected=true;mEl.appendChild(o);}
 
-// 起動
-CK=lsGet(“ck”); PR=lsGet(“pr”); tot(); rCal();
+CK=lsGet(“ck”);PR=lsGet(“pr”);tot();rCal();
 Promise.all([
 fetch(SB+”/rest/v1/cheki?select=*&order=created_at.asc”,{headers:SH}).then(function(r){return r.json();}),
 fetch(SB+”/rest/v1/profiles?select=*”,{headers:SH}).then(function(r){return r.json();})
 ]).then(function(res){
 if(Array.isArray(res[0])&&Array.isArray(res[1])){online=true;CK=res[0];PR=res[1];lsSave();tot();rCal();}
 }).catch(function(){});
-
-}); // DOMContentLoaded
+});
 </script>
 
 </body>
